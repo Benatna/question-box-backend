@@ -1,0 +1,4 @@
+{
+  "verbose": true,
+  "ignore": ["db.json", "db_test.json", "db_backup.json"]
+}
