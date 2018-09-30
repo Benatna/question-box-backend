@@ -8,6 +8,10 @@ const checkAuth = require('../middleware/check-auth')
 // Public Route: Login. Request Body: EMAIL, PASSWORD
 router.post('/login', emailChecks.encryptEmail, controller.userLogin)
 
+// Public Route: List Ambassadors.
+// TODO: ADD TEST FOR THIS ROUTE
+router.get('/ambassadors', controller.listAmbassadors)
+
 // Private Route: Register Users. Request Header: TOKEN. Body: EMAIL, ROLE, PASSWORD
 router.post('/register', checkAuth, emailChecks.encryptEmail, controller.userRegister)
 

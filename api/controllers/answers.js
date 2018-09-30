@@ -10,10 +10,10 @@ exports.submitOrUpdateAnswer = (req, res, next) => {
   try {
     const questionAnswered = answerModel.submitOrUpdateAnswer({
       question_id : req.params.questionId,
+      ambassador : cryptr.encrypt(req.userData.email),
       answer : req.body.answer
     })
 
-    // TODO: REVIEW WHEN FINAL MODEL FOR ANSWER IS DEFINED
     if (questionAnswered) {
 
       let emailNotification = notificationsModel.getEmailNotificationByQuestion(questionAnswered.id)
@@ -37,21 +37,13 @@ exports.submitOrUpdateAnswer = (req, res, next) => {
         }
         try {
           transporter.sendEmail(receiver, questionText, lang)
-          let deleteNotification = notificationsModel.deleteEmailNotification(emailNotification.id)
-          if (deleteNotification) {
-            return res.status(200).json(questionAnswered)
-          } else {
-            return res.status(500).json({
-              err : "Something went wrong when deleting the notification"
-            })
-          }
+          notificationsModel.deleteEmailNotification(emailNotification.id)
         }
         catch (err) {
           return res.status(500).json({
             error: err.toString()
           })
         }
-
       }
 
       if (pushNotification) {
@@ -70,14 +62,7 @@ exports.submitOrUpdateAnswer = (req, res, next) => {
 
         try {
           pusher.sendPushNotification(subscription, payload)
-          let deletePushNotification = notificationsModel.deletePushNotification(pushNotification.id)
-          if (deletePushNotification) {
-            return res.status(200).json(questionAnswered)
-          } else {
-            return res.status(500).json({
-              err : "Something went wrong when deleting the notification"
-            })
-          }
+          notificationsModel.deletePushNotification(pushNotification.id)
         }
         catch (err) {
           return res.status(500).json({
@@ -86,9 +71,7 @@ exports.submitOrUpdateAnswer = (req, res, next) => {
         }
       }
 
-      if (!(pushNotification) && !(emailNotification)) {
-        return res.status(200).json(questionAnswered)
-      }
+      return res.status(200).json(questionAnswered)
 
     } else {
       return res.status(404).json({

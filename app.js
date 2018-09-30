@@ -23,6 +23,8 @@ app.use( (req, res, next) => {
   next()
 } )
 
+app.use('/static', express.static('static'))
+
 const questionsRoutes =  require('./api/routes/questions')
 const userRoutes = require('./api/routes/users')
 

@@ -7,7 +7,7 @@ const db = require('../models/DBcontroller').db
 exports.getUser = (user_email) => {
   let userSet = db.get('users').cloneDeep()
 
-  userSet = userSet.forEach ( (user) => {
+  userSet = userSet.forEach( (user) => {
     user.email = cryptr.decrypt(user.email)
   })
   return userSet.find( { email : cryptr.decrypt(user_email) } ).value()
@@ -21,14 +21,41 @@ exports.getAdministrators = () => {
   return administrators
 }
 
-exports.createUser = ({user_email, hash, role}) => {
+exports.getUsers = ({role, publicFields}) => {
+  let users = db.get('users').cloneDeep()
+
+  if (role) {
+    users = users.filter({ role: role })
+  }
+
+  if (publicFields) {
+    users = users.map(el => {
+      return {
+        id: el.id,
+        name : el.name,
+        picture : el.picture,
+        age : el.age,
+        location : el.location,
+        bio : el.bio
+      }
+    })
+  }
+  return users
+}
+
+exports.createUser = ({user_email, hash, role, name, picture, age, location, bio}) => {
   try {
     db.get('users')
     .push({
       id : shortid.generate(),
       email : user_email,
       password : hash,
-      role : role
+      role : role,
+      name : name,
+      picture : picture,
+      age : age,
+      location : location,
+      bio : bio
     })
     .write()
 
@@ -39,7 +66,7 @@ exports.createUser = ({user_email, hash, role}) => {
   }
 }
 
-exports.userUpdate = ({id, user_email, hash, role}) => {
+exports.userUpdate = ({user_email, hash, role, name, picture, age, location, bio}) => {
   try {
     let payload = {}
 
@@ -51,6 +78,21 @@ exports.userUpdate = ({id, user_email, hash, role}) => {
     }
     if (role) {
       payload["role"] = role
+    }
+    if (name) {
+      payload["name"] = name
+    }
+    if (picture) {
+      payload["picture"] = picture
+    }
+    if (age) {
+      payload["age"] = age
+    }
+    if (location) {
+      payload["location"] = location
+    }
+    if (bio) {
+      payload["bio"] = bio
     }
 
     db.get("users")

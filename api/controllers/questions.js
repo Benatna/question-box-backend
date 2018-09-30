@@ -1,6 +1,5 @@
 const questionModel = require('../models/questions')
 
-
 exports.listAnsweredQuestions = (req, res, next) => {
   try {
     filteredQuestions = questionModel.getQuestionSet({
@@ -29,8 +28,6 @@ exports.sendNewQuestion = (req, res, next) => {
     } else if (req.body.text.en || req.body.text.de) {
       let created_question = questionModel.addQuestion({
         text: req.body.text,
-        additional_details: req.body.additional_details,
-        related_question: req.body.related_question,
         asker_age: req.body.asker_age
       })
 
@@ -40,33 +37,6 @@ exports.sendNewQuestion = (req, res, next) => {
     } else {
       return res.status(400).json({
         error: "The question sent is not in a valid language."
-      })
-    }
-  } catch (err) {
-    return res.status(500).json({
-      error: err.toString()
-    })
-  }
-}
-
-
-// NOTE: REVIEW THIS
-exports.addAdditionalDetails = (req, res, next) => {
-  try {
-    let updated_question = questionModel.updateQuestion({
-      id: req.params.questionId,
-      additional_details: req.body.additional_details,
-      related_question: req.body.related_question,
-      asker_age: req.body.asker_age
-    })
-
-    if (updated_question) {
-      return res.status(200).json(
-        updated_question
-      )
-    } else {
-      return res.status(400).json({
-        error: "Bad input, please review question id and payload"
       })
     }
   } catch (err) {
@@ -148,8 +118,6 @@ exports.modifyQuestion = (req, res, next) => {
       id: req.params.questionId,
       text_en: text.en,
       text_de: text.de,
-      additional_details: req.body.additional_details,
-      related_question: req.body.related_question,
       date_asked: req.body.date_asked,
       number_of_views: req.body.number_of_views,
       asker_age: req.body.asker_age,

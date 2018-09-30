@@ -46,7 +46,6 @@ describe('Questions', () => {
     text: {
       en: "Question in English",
     },
-    additional_details : "Additional Details",
     asker_age : "23"
   }
   let questionId
@@ -83,7 +82,7 @@ describe('Questions', () => {
       .end( (err, res) => {
         res.should.have.status(201)
         res.body.should.be.a('object')
-        res.body.should.have.keys("text", "id", "number_of_views", "date_asked", "asker_age", "additional_details")
+        res.body.should.have.keys("text", "id", "number_of_views", "date_asked", "asker_age")
         res.body.text.should.have.keys("en")
         questionId = res.body.id
         done()
@@ -92,23 +91,9 @@ describe('Questions', () => {
     it('it should be rejected if no text', (done) => {
       chai.request(url)
       .post('questions/')
-      .send({additional_details : "Lipsum"})
+      .send({asker_age : "32"})
       .end( (err, res) => {
         res.should.have.status(400)
-        done()
-      })
-    })
-  })
-  describe('/questionId patch tests', () => {
-    it('it should change question details, return it in 200 code', (done) => {
-      chai.request(url)
-      .patch('questions/' + questionId)
-      .send({asker_age : "55"})
-      .end( (err, res) => {
-        res.should.have.status(200)
-        res.body.should.have.keys("text", "id", "number_of_views", "date_asked", "asker_age", "additional_details")
-        res.body.asker_age.should.equal("55")
-        number_of_views = res.body.number_of_views
         done()
       })
     })
@@ -199,7 +184,7 @@ describe('Questions', () => {
       .end( (err, res) => {
         res.should.have.status(200)
         res.body.should.be.an("object")
-        res.body.should.include.keys("text", "id", "number_of_views", "date_asked", "additional_details", "asker_age")
+        res.body.should.include.keys("text", "id", "number_of_views", "date_asked", "asker_age")
         done()
       })
     })
@@ -219,7 +204,7 @@ describe('Questions', () => {
       .end( (err, res) => {
         res.should.have.status(200)
         res.body.should.be.an("object")
-        res.body.should.include.keys("text", "id", "number_of_views", "date_asked", "additional_details", "asker_age")
+        res.body.should.include.keys("text", "id", "number_of_views", "date_asked", "asker_age")
         res.body.text.should.include.keys("en", "de")
         res.body.text.en.should.equal(askingQuestion["text"]["en"])
         res.body.text.de.should.equal("adding German")
@@ -307,7 +292,7 @@ describe('Questions', () => {
         })
       })
     })
-    it('it should return 404 if no quesiton is found ', (done) => {
+    it('it should return 404 if no question is found', (done) => {
       chai.request(url)
       .delete('questions/' + questionId)
       .set('Authorization', tokenAdmin)

@@ -7,12 +7,11 @@ exports.getQuestionSet = ({filterNull, publicFields}) => {
   let questions = db.get('questions').cloneDeep()
 
   if (filterNull) {
-    questions = questions.filter('answer', null)
+    questions = questions.filter('answers', null)
     .value()
   } else {
     questions = questions.value()
   }
-
 
   if (publicFields) {
     questions = questions.map(el => {
@@ -21,10 +20,18 @@ exports.getQuestionSet = ({filterNull, publicFields}) => {
         text : el.text,
         date_asked : el.date_asked,
         number_of_views : el.number_of_views,
-        answer : el.answer
+        answers : el.answers
       }
     })
   }
+
+  // questions.forEach( (question) => {
+  //   question.answers.forEach( (answer) => {
+  //     const ambassador = userModel.getUser(answer.ambassador)
+  //     answer['ambassador'] = {name : ambassador.name, pic: ambassador.pic, bio : ambassador.bio}
+  //   })
+  // })
+
   return questions
 }
 
@@ -37,7 +44,7 @@ exports.getQuestionById = (id) => {
   return question
 }
 
-exports.addQuestion = ({text, additional_details, related_question, asker_age}) => {
+exports.addQuestion = ({text, asker_age}) => {
   let questionId = shortid.generate()
 
   db.get('questions')
@@ -45,8 +52,6 @@ exports.addQuestion = ({text, additional_details, related_question, asker_age}) 
     id: questionId,
     text: text,
     number_of_views : 0,
-    additional_details : additional_details,
-    related_question : related_question,
     date_asked : Date.now(),
     asker_age : asker_age,
   })
@@ -80,13 +85,14 @@ exports.increaseViews = (id) => {
 
 
 // THIS IS NOT GREAT FOR MULTILANGUAGE
-exports.updateQuestion = ({id, text_en, text_de, additional_details, related_question, date_asked, number_of_views, asker_age}) => {
+exports.updateQuestion = ({id, text_en, text_de, date_asked, number_of_views, asker_age}) => {
   let question = db.get('questions')
   .find( {id : id } )
 
   if ( question.value() ) {
     // NOTE: THIS MAY NOT BE THE BEST WAY FORWARD
     let payload = {}
+
     if (text_en || text_de) {
       payload["text"] = {}
       if (text_en) {
@@ -100,12 +106,7 @@ exports.updateQuestion = ({id, text_en, text_de, additional_details, related_que
         payload["text"]["de"] = question.value().text.de
       }
     }
-    if (additional_details) {
-      payload['additional_details'] = additional_details
-    }
-    if (related_question) {
-      payload['related_question'] = related_question
-    }
+
     if (date_asked) {
       payload["date_asked"] = date_asked
     }

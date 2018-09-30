@@ -15,9 +15,6 @@ router.get('/', controller.listAnsweredQuestions)
 // Public Route: Send New Question
 router.post('/', controller.sendNewQuestion)
 
-// Public Route: Add additional details to question
-router.patch('/:questionId', controller.addAdditionalDetails)
-
 // Public Route: Update Question Number of Views
 router.patch('/:questionId/update_views', controller.updateNumberOfViews)
 

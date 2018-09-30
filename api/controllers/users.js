@@ -56,6 +56,19 @@ exports.userLogin = (req, res, next) => {
 }
 
 
+exports.listAmbassadors = (req, res, next) => {
+  try {
+    const users = usersModel.getUsers( {role: 'ambassador', publicFields : true } )
+    return res.status(200).json(users)
+  }
+  catch (err) {
+    return res.status(500).json({
+      error: err.toString()
+    })
+  }
+}
+
+
 exports.userRegister = (req, res, next) => {
   try {
     if ( !(req.userData.role==='administrator') ) {
@@ -86,7 +99,12 @@ exports.userRegister = (req, res, next) => {
           createdUser = usersModel.createUser({
             user_email : req.body.email,
             hash : hash,
-            role : req.body.role
+            name : req.body.name,
+            role : req.body.role,
+            picture : req.body.picture,
+            bio : req.body.bio,
+            age : req.body.age,
+            location : req.body.location,
           })
 
           if (createdUser) {
@@ -143,7 +161,12 @@ exports.userUpdate = (req, res, next) => {
         id : user.id,
         user_email: req.body.new_email,
         hash : hash,
-        role : req.body.role
+        name : req.body.name,
+        role : req.body.role,
+        picture : req.body.picture,
+        bio : req.body.bio,
+        age : req.body.age,
+        location : req.body.location,
       })
 
       if (userModified) {
