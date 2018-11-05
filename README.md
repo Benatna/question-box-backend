@@ -102,6 +102,7 @@ The API hosts two main routes: questions and users. Both are differentiated betw
 | Method | End-Point   | Request Body  | Successful Response | Description |
 | ------ | ----------- | ------------- | ------------------- | ----------- |
 | POST | /users/login | email, password | JSON Web Token | Checks if user/password combination is correct and returns a web token |
+| GET | /users/ambassadors |  | ambassadors array | Returns public information of ambassadors |
 | GET | /questions/ |  | questions array | Returns all answered questions |
 | POST | /questions/ | question object | created question object | Send a new question to the server |
 | PATCH | /questions/:id/ | question object | updated question object | Update details of a specific question |
@@ -115,8 +116,8 @@ All private routes require a valid JSON Web Token in the header as authenticatio
 
 | Method | End-Point   | Request Body  | Successful Response | Permission | Description |
 | ------ | ----------- | ------------- | ------------------- | ---------- | ----------- |
-| POST | /users/register/ | email, role, password | message: "User created." | Administrators | Creates a new account |
-| PATCH | /users/update/ | email, new_email, new_password, role | message: "User updated." | Administrators, the user itself |Modifies an user account. It fails if no other administrator exists  |
+| POST | /users/register/ | email, role, password, age, name, picture, location, bio | message: "User created." | Administrators | Creates a new account |
+| PATCH | /users/update/ | email, new_email, new_password, role, age, name, picture, location, bio | message: "User updated." | Administrators, the user itself |Modifies an user account. It fails if no other administrator exists  |
 | DELETE | /users/delete/ | email | message: "User deleted." | Administrators, the user itself | Deletes an user. It fails if no other administrator exists |
 | GET | /questions/all/ |  | questions array | Ambassadors, administrators | Lists all questions, even unanswered ones |
 | GET | /questions/:id/ |  | question object | Ambassadors, administrators | Get all details about the question submitted |
@@ -124,6 +125,10 @@ All private routes require a valid JSON Web Token in the header as authenticatio
 | DELETE | /questions/:id/ | | message: "Question Deleted." | Ambassadors, administrators | Delete specific question |
 | PUT | /questions/:id/answer | answer object | question object | Ambassadors, administrators | Answer or update a previous answer |
 | DELETE | /questions/:id/answer | | question object | Ambassadors, administrators | Delete a previous answer |
+
+## Static files
+
+The application can serve static files uploaded to the `/static/` folder, and accessed through the `/static/` route.
 
 ## Multi-language
 

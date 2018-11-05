@@ -36,7 +36,7 @@ exports.submitOrUpdateAnswer = (req, res, next) => {
           })
         }
         try {
-          transporter.sendEmail(receiver, questionText, lang)
+          transporter.sendEmail(receiver, questionText, questionAnswered.id, lang)
           notificationsModel.deleteEmailNotification(emailNotification.id)
         }
         catch (err) {
@@ -58,7 +58,9 @@ exports.submitOrUpdateAnswer = (req, res, next) => {
           payload["body"] = "Klicken Sie hier, um die Antwort zu sehen"
         }
 
+        payload["url"] = "/answers/" + questionAnswered.id
         payload = JSON.stringify(payload)
+        console.log(payload)
 
         try {
           pusher.sendPushNotification(subscription, payload)
